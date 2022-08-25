@@ -34,7 +34,7 @@ LAtool
 ======
 
 
-    Add a short description here!
+    Tool for local ancestry
 
 
 A longer description of your project goes here...
