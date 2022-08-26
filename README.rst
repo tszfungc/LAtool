@@ -1,6 +1,6 @@
 .. image:: https://github.com/tszfungc/LAtool/actions/workflows/docs.yml/badge.svg
     :alt: Documentation status
-    :target: tszfungc.github.io/latool/
+    :target: https://tszfungc.github.io/LAtool/
 
 |
 
