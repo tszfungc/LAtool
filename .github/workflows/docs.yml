@@ -25,6 +25,7 @@ jobs:
           path: ./docs/_build/html/
 
   deploy:
+    needs: build
     permissions:
       pages: write      # to deploy to Pages
       id-token: write   # to verify the deployment originates from an appropriate source
