@@ -16,7 +16,8 @@ jobs:
       - name: Tools for docs build
         run: |
           pip install --upgrade pip
-          pip install -r requirement_dev.txt
+          pip install -r requirement.txt requirement_dev.txt
+          python setup.py install
       - name: make docs
         run: |
           make -C docs html
