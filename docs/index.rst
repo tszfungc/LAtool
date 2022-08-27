@@ -27,15 +27,19 @@ Contents
 ========
 
 .. toctree::
-   :maxdepth: 2
+    :caption: User 
+    :maxdepth: 2
 
-   Overview <readme>
-   Contributions & Help <contributing>
-   License <license>
-   Authors <authors>
-   Changelog <changelog>
-   Module Reference <api/modules>
+    Overview <readme>
+    API Reference <api>
 
+
+.. toctree::
+    :caption: Developer
+
+    Authors <authors>
+    Contributions & Help <contributing>
+    Changelog <changelog>
 
 Indices and tables
 ==================
