@@ -27,7 +27,7 @@ Contents
 ========
 
 .. toctree::
-    :caption: User 
+    :caption: User
     :maxdepth: 2
 
     Overview <readme>
