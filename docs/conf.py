@@ -68,7 +68,7 @@ extensions = [
     "sphinx.ext.todo",
     "sphinx.ext.autosummary",
     # "sphinx_autosummary_accessors",
-    "sphinx.ext.viewcode",
+    # "sphinx.ext.viewcode",
     "sphinx.ext.coverage",
     "sphinx.ext.doctest",
     "sphinx.ext.ifconfig",

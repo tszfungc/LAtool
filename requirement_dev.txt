@@ -1,5 +1,7 @@
 pre-commit
-sphinx
+sphinx==4.2
 sphinx-autodoc-typehints
 sphinx-book-theme
 pytest-cov
+pytest-accept
+

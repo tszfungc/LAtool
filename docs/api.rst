@@ -3,9 +3,8 @@ API reference
 =============
 
 .. currentmodule:: latool.io
-.. _api:
 
-Top
+I/O
 ===
 
 .. autosummary::
