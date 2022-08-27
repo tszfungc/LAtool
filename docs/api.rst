@@ -11,3 +11,4 @@ I/O
     :toctree: generated/
 
     read_rfmix_fb
+    write_pgen
