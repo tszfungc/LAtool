@@ -2,7 +2,7 @@
 API reference
 =============
 
-.. currentmodule:: latool
+.. currentmodule:: latool.io
 .. _api:
 
 Top
@@ -11,4 +11,4 @@ Top
 .. autosummary::
     :toctree: generated/
 
-    latool.read_rfmix_fb
+    read_rfmix_fb
