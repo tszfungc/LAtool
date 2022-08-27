@@ -37,7 +37,6 @@ Contents
 .. toctree::
     :caption: Developer
 
-    Authors <authors>
     Contributions & Help <contributing>
     Changelog <changelog>
 
