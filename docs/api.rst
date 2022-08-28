@@ -12,3 +12,15 @@ I/O
 
     read_rfmix_fb
     write_pgen
+
+
+
+Statistics
+==========
+
+.. currentmodule:: latool.stats
+
+.. autosummary::
+    :toctree: generated/
+
+    empirical_LAD
