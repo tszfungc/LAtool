@@ -37,6 +37,8 @@ htmlcov/*
 junit*.xml
 coverage.xml
 .pytest_cache/
+tests_out/
+
 
 # Build and docs folder/files
 build/*
@@ -45,6 +47,7 @@ sdist/*
 docs/api/*
 docs/_rst/*
 docs/_build/*
+docs/generated/*
 cover/*
 MANIFEST
 

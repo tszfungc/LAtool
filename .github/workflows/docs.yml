@@ -3,19 +3,21 @@ name: docs
 on:
   push:
     branches: [main]
+  pull_request:
 
 
 jobs:
-  build: 
-    # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
+        with: {python-version: "3.10"}
       - name: Tools for docs build
         run: |
           pip install --upgrade pip
-          pip install -r requirement_dev.txt
+          pip install -r requirement.txt -r requirement_dev.txt
+          python setup.py install
       - name: make docs
         run: |
           make -C docs html
@@ -26,13 +28,14 @@ jobs:
 
   deploy:
     needs: build
+    runs-on: ubuntu-latest
+    # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
     permissions:
       pages: write      # to deploy to Pages
       id-token: write   # to verify the deployment originates from an appropriate source
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
