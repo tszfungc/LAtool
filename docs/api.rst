@@ -25,3 +25,13 @@ Statistics
     :toctree: generated/
 
     empirical_LAD
+
+Annotate
+========
+
+.. currentmodule:: latool.annotate
+
+.. autosummary::
+    :toctree: generated/
+
+    genetic_distance
