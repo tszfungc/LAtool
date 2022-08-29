@@ -7,11 +7,11 @@ def empirical_LAD(
 ) -> xr.DataArray:
     """Compute empirical local ancestry linkage disequilibrium
 
-    Args
+    Args:
         da_locanc: DataArray storing the local ancestry dosage
 
 
-    Returns
+    Returns:
         A marker by marker matrix of empirical LAD
 
     """
