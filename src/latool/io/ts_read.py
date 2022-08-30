@@ -1,0 +1,172 @@
+"""Module for reading local ancestry from tree sequences
+
+Output from software to be supported:
+- msprime
+
+"""
+import logging
+from typing import Any, List
+
+import msprime
+import numpy as np
+import pandas as pd
+import tskit
+import xarray as xr
+
+
+def _trace_anc(
+    treeseq: tskit.TreeSequence,
+    node_admixed: List[int],
+    node_ancestor: List[int],
+    ancestries: List[Any],
+) -> xr.Dataset:
+    """Trace ancestry
+
+    Args:
+        treeseq: Tree sequence
+        node_admixed: list of admixed node in the tree sequence
+        node_ancestor: list of ancestor node in the tree sequence at census time
+        ancestries: list of ancestry names
+
+    Returns:
+        Dataset containing local ancestries
+
+    """
+    anc_dict = {i.metadata["name"]: i.id for i in treeseq.populations()}
+    # Trace ancestor id at census time
+    locanc_tbl = treeseq.tables.link_ancestors(node_admixed, node_ancestor)
+
+    # Convert ancestors id to pop id
+    # Convert child's haplotype id to individual id
+    traced_pop = [treeseq.node(i).population for i in locanc_tbl.parent]
+    traced_indiv = [treeseq.node(i).individual for i in locanc_tbl.child]
+
+    # ploidy id: 0 if even else 1.
+    ds_dict = {
+        "Start": locanc_tbl.left,
+        "Node": locanc_tbl.child % 2,
+        "individual": traced_indiv,
+    }
+
+    # one hot encode ancestries
+    for a in ancestries:
+        ds_dict[a] = np.equal(anc_dict[a], traced_pop).astype(np.int8)
+
+    # prep dict for making xarray
+    loc_arr = pd.DataFrame(ds_dict)
+    loc_arr.columns = ["marker", "ploidy", "sample"] + ancestries
+    loc_arr = pd.melt(
+        loc_arr,
+        id_vars=["marker", "ploidy", "sample"],
+        var_name="ancestry",
+        value_vars=ancestries,
+        value_name="locanc",
+    )
+    loc_arr.set_index(["marker", "sample", "ploidy", "ancestry"], inplace=True)
+
+    # Convert pandas to xarray.Dataset, propagate all entry to the following nan
+    ds = xr.Dataset.from_dataframe(loc_arr)
+
+    return ds
+
+
+def read_msp_ts(
+    fname: str,
+    admixpop: str,
+    ancpop: List[str],
+    keep: Any = None,
+) -> xr.Dataset:
+
+    """Trace ancestry in tree sequence output from msprime
+
+    The ancestors and the population they belong to at the census time are traced.
+
+    Args:
+        fname: path to tree sequence
+        admixpop: population name of the admixed population
+        ancpop: list of names of the ancestral populations
+        keep: id of admixed individuals to be included
+
+    Returns:
+        Dataset containing local ancestry
+
+    Example
+    -------
+    >>> from latool.io import read_msp_ts
+    >>> ds = read_msp_ts(
+    ...     fname="tests/testdata/example.ts",
+    ...     admixpop='ADMIX',
+    ...     ancpop=['EUR', 'AFR'])
+    >>> ds
+    <xarray.Dataset>
+    Dimensions:         (marker: 5, sample: 10, ploidy: 2, ancestry: 2)
+    Coordinates:
+      * marker          (marker) uint64 15472077 15671821 15704336 15776649 15883331
+      * sample          (sample) int64 0 1 2 3 4 5 6 7 8 9
+      * ploidy          (ploidy) int64 0 1
+      * ancestry        (ancestry) object 'AFR' 'EUR'
+    Data variables:
+        locanc          (marker, sample, ploidy, ancestry) float32 1.0 0.0 ... 0.0
+        left_position   (marker) uint64 15295879 15648276 15695366 15713306 15839992
+        right_position  (marker) uint64 15648276 15695366 15713306 15839992 15926670
+
+    """
+
+    ts = tskit.load(fname)
+    ancpop = list(ancpop)
+
+    # nodes to be traced
+    node_admixed = np.array(
+        [
+            i.id
+            for i in ts.nodes()
+            if ts.population(i.population).metadata["name"] == admixpop
+            and i.time == 0.0
+        ]
+    )
+
+    if keep is not None:
+        node_admixed = node_admixed[np.in1d(node_admixed, keep)]
+
+    logging.debug(node_admixed)
+    node_ancestor = [i.id for i in ts.nodes() if i.flags == msprime.NODE_IS_CEN_EVENT]
+
+    logging.debug(ancpop)
+
+    if len(node_ancestor) == 0:
+        raise RuntimeError("No Census event found: No ancestors can be traced")
+
+    def indiv_batch_generator(nodes, size=20):
+        n = len(nodes)
+        for left in range(0, n, size):
+            right = min(left + size, n)
+            yield nodes[left:right]
+
+    xarr_list = []
+    for idx, batch in enumerate(indiv_batch_generator(node_admixed)):
+        if idx % 10 == 0:
+            logging.debug(f"tracing {idx+1}-th batch of {len(batch)//2} individuals")
+        xarr_list.append(
+            _trace_anc(
+                treeseq=ts,
+                node_admixed=batch,
+                node_ancestor=node_ancestor,
+                ancestries=ancpop,
+            )
+        )
+
+    xarr_ = xr.concat(xarr_list, dim="sample")
+    # xarr_ = laxr_simplify(xarr_)
+
+    xarr_ = xarr_.ffill(dim="marker")
+
+    rmost_pos = ts.sequence_length
+    lpos = np.uint(xarr_.marker.values)
+    rpos = np.append(xarr_.marker.values[1:], rmost_pos).astype(np.uint)
+
+    # set marker to mid(lpos, rpos). Annotate left pos and right pos.
+    xarr_["marker"] = np.uint(0.5 * (lpos + rpos))
+    xarr_["left_position"] = ("marker", lpos)
+    xarr_["right_position"] = ("marker", rpos)
+
+    return xarr_

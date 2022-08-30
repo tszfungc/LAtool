@@ -1,5 +1,7 @@
 xarray
-numpy <= 1.22
+bottleneck
 pandas
 pgenlib
 numba
+tskit == 0.5.0
+numpy == 1.22.4

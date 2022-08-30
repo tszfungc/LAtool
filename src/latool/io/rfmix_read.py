@@ -142,7 +142,7 @@ def read_rfmix_msp(
 
         lpos.append(int(line_split[1]))
         rpos.append(int(line_split[2]))
-        pos.append(0.5 * (rpos[-1] - lpos[-1]))
+        pos.append(0.5 * (rpos[-1] + lpos[-1]))
 
         if chrom is None:
             chrom = int(line_split[0])

@@ -12,6 +12,7 @@ I/O
 
     read_rfmix_fb
     read_rfmix_msp
+    read_msp_ts
     write_pgen
 
 
