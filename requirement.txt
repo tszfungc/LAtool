@@ -3,5 +3,6 @@ bottleneck
 pandas
 pgenlib
 numba
+msprime
 tskit == 0.5.0
 numpy == 1.22.4
