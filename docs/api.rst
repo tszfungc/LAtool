@@ -14,6 +14,7 @@ I/O
     read_rfmix_msp
     read_msp_ts
     write_pgen
+    write_Q
 
 
 
