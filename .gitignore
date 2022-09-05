@@ -48,7 +48,7 @@ sdist/*
 docs/api/*
 docs/_rst/*
 docs/_build/*
-docs/generated/*
+docs/_generated/*
 cover/*
 MANIFEST
 

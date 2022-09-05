@@ -4,11 +4,11 @@ API reference
 
 .. currentmodule:: latool.io
 
-I/O
-===
+Input and Output
+================
 
 .. autosummary::
-    :toctree: generated/
+    :toctree: _generated/
 
     read_rfmix_fb
     read_rfmix_msp
@@ -24,16 +24,28 @@ Statistics
 .. currentmodule:: latool.stats
 
 .. autosummary::
-    :toctree: generated/
+    :toctree: _generated/
 
     empirical_LAD
 
 Annotate
 ========
 
+Functions for adding external annotations.
+
 .. currentmodule:: latool.annotate
 
 .. autosummary::
-    :toctree: generated/
+    :toctree: _generated/
 
     genetic_distance
+
+Utility
+=======
+
+.. currentmodule:: latool.util
+
+.. autosummary::
+    :toctree: _generated/
+
+    simplify
