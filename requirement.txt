@@ -1,4 +1,5 @@
 xarray
+zarr
 bottleneck
 pandas
 pgenlib
