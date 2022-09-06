@@ -168,5 +168,6 @@ def read_msp_ts(
     xarr_["marker"] = np.uint(0.5 * (lpos + rpos))
     xarr_["left_position"] = ("marker", lpos)
     xarr_["right_position"] = ("marker", rpos)
+    xarr_['sample'] = [f"indiv{s}" for s in xarr_['sample']]
 
     return xarr_
