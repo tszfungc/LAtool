@@ -1,3 +1,6 @@
-from .LAD import empirical_LAD
+from .LAD import *
 
-__all__ = ["empirical_LAD"]
+__all__ = [
+    "empirical_LAD",
+    "theoretical_LAD",
+]
