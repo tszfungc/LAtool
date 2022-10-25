@@ -1,4 +1,5 @@
 xarray
+netCDF4
 zarr
 bottleneck
 pandas
