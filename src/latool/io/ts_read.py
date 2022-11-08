@@ -13,6 +13,7 @@ import pandas as pd
 import tskit
 import xarray as xr
 
+_logger = logging.getLogger(__name__)
 
 def _trace_anc(
     treeseq: tskit.TreeSequence,
@@ -75,6 +76,7 @@ def read_msp_ts(
     admixpop: str,
     ancpop: List[str],
     keep: Any = None,
+    extract: Any = None,
 ) -> xr.Dataset:
 
     """Trace ancestry in tree sequence output from msprime
@@ -128,10 +130,10 @@ def read_msp_ts(
     if keep is not None:
         node_admixed = node_admixed[np.in1d(node_admixed, keep)]
 
-    logging.debug(node_admixed)
+    _logger.info(f"Number of admixed individuals kept: {len(node_admixed)//2}")
     node_ancestor = [i.id for i in ts.nodes() if i.flags == msprime.NODE_IS_CEN_EVENT]
 
-    logging.debug(ancpop)
+    _logger.info(ancpop)
 
     if len(node_ancestor) == 0:
         raise RuntimeError("No Census event found: No ancestors can be traced")
@@ -145,7 +147,7 @@ def read_msp_ts(
     xarr_list = []
     for idx, batch in enumerate(indiv_batch_generator(node_admixed)):
         if idx % 10 == 0:
-            logging.debug(f"tracing {idx+1}-th batch of {len(batch)//2} individuals")
+            _logger.info(f"tracing {idx+1}-th batch of {len(batch)//2} individuals")
         xarr_list.append(
             _trace_anc(
                 treeseq=ts,
@@ -154,6 +156,11 @@ def read_msp_ts(
                 ancestries=ancpop,
             )
         )
+    if extract is not None:
+        for di, _ in enumerate(xarr_list):
+            xarr_list[di] = xarr_list[di].ffill(dim='marker')
+            xarr_list[di] = xarr_list[di].sel(marker=extract, method='ffill')
+            xarr_list[di]['marker'] = extract
 
     xarr_ = xr.concat(xarr_list, dim="sample")
     # xarr_ = laxr_simplify(xarr_)
@@ -165,9 +172,9 @@ def read_msp_ts(
     rpos = np.append(xarr_.marker.values[1:], rmost_pos).astype(np.uint)
 
     # set marker to mid(lpos, rpos). Annotate left pos and right pos.
-    xarr_["marker"] = np.uint(0.5 * (lpos + rpos))
-    xarr_["left_position"] = ("marker", lpos)
-    xarr_["right_position"] = ("marker", rpos)
+    # xarr_["marker"] = np.uint(0.5 * (lpos + rpos))
+    # xarr_["left_position"] = ("marker", lpos)
+    # xarr_["right_position"] = ("marker", rpos)
     xarr_['sample'] = [f"indiv{s}" for s in xarr_['sample']]
 
     return xarr_
