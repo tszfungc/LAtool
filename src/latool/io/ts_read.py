@@ -171,3 +171,42 @@ def read_msp_ts(
     xarr_['sample'] = [f"indiv{s}" for s in xarr_['sample']]
 
     return xarr_
+
+
+def read_msp_mutations(
+    fname: str,
+    admixpop: str,
+    ancpop: List[str],
+    keep: Any = None,
+) -> xr.Dataset:
+
+    ts = tskit.load(fname)
+
+    # nodes to be traced
+    node_admixed = np.array(
+        [
+            i.id
+            for i in ts.nodes()
+            if ts.population(i.population).metadata["name"] == admixpop
+            and i.time == 0.0
+        ]
+    )
+    if keep is not None:
+        node_admixed = node_admixed[np.in1d(node_admixed, keep)]
+
+
+    gt = ts.genotype_matrix()
+    gt_dos = gt[:, node_admixed][:, ::2] + gt[:, node_admixed][:, 1::2]
+    individual = [ ts.node(node_admixed[i]).individual for i in range(0, len(node_admixed), 2)]
+    ds_gt = xr.Dataset(
+        data_vars={
+            "genotype":(['marker', 'sample'],gt_dos)
+        },
+        coords={
+            "marker": ts.tables.sites.position,
+            "sample": np.array([f"indiv{s}" for s in individual], dtype=object)
+            }
+    )
+
+
+    return ds_gt
