@@ -201,17 +201,24 @@ def read_msp_mutations(
     if keep is not None:
         node_admixed = node_admixed[np.in1d(node_admixed, keep)]
 
+    sample_id = [ ts.node(node_admixed[i]).individual for i in range(0, len(node_admixed), 2)]
+    sample = np.array([f"indiv{s}" for s in sample_id], dtype=object)
+    marker = np.array(ts.tables.sites.position)
 
-    gt = ts.genotype_matrix()
-    gt_dos = gt[:, node_admixed][:, ::2] + gt[:, node_admixed][:, 1::2]
-    individual = [ ts.node(node_admixed[i]).individual for i in range(0, len(node_admixed), 2)]
+
+    gt = (
+        ts.genotype_matrix()[:, node_admixed]
+        .reshape(marker.shape[0], sample.shape[0], 2)
+    )
+    #gt_dos = gt[:, node_admixed][:, ::2] + gt[:, node_admixed][:, 1::2]
     ds_gt = xr.Dataset(
         data_vars={
-            "genotype":(['marker', 'sample'],gt_dos)
+            "genotype":(['marker', 'sample', 'ploidy'],gt)
         },
         coords={
-            "marker": ts.tables.sites.position,
-            "sample": np.array([f"indiv{s}" for s in individual], dtype=object)
+            "marker": marker,
+            "sample": sample,
+            "ploidy": [0, 1]
             }
     )
 
