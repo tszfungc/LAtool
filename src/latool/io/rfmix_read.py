@@ -71,7 +71,10 @@ def read_rfmix_fb(
         LA_matrix.append(line_split[4:])
 
         pos.append(int(line_split[1]))
-        genetic_pos.append(line_split[2])
+        if line_split[2] == ".":
+            genetic_pos.append(np.nan)
+        else:
+            genetic_pos.append(line_split[2])
 
         if chrom is None:
             chrom = int(line_split[0])
