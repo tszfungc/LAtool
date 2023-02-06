@@ -22,3 +22,38 @@ def write_Q(
         ga.to_csv(f, sep="\t", index=None)
 
     return ga
+
+
+def write_rfmix_fb(
+    ds: xr.Dataset,
+    out: str,
+):
+    samples = ds["sample"].values
+    ancestries = ds["ancestry"].values
+    samples_col = [
+        f"{s}:::{h}:::{a}"
+        for s in samples
+        for h in ["hap1", "hap2"]
+        for a in ancestries
+    ]
+    pos = ds["marker"].values + 1
+
+    header = ["#reference_panel_population:\t" + "\t".join(ds["ancestry"].values)]
+    header.append(
+        "chromosome\tphysical_position\tgenetic_position\tgenetic_marker_index\t"
+        + "\t".join(samples_col)
+    )
+
+    header = "\n".join(header)
+
+    locanc_2d = ds["locanc"].values.reshape(ds.dims["marker"], -1)
+
+    f = open(out, "w")
+
+    print(header, file=f)
+    for i, row in enumerate(locanc_2d):
+        if i % 10000 == 0:
+            print(f"Writing {i+1} / {pos.shape[0]} marker")
+
+        row_str = f"1\t{pos[i]}\t.\t{i}\t" + "\t".join(row.astype(str))
+        print(row_str, file=f)

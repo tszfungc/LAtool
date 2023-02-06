@@ -175,7 +175,7 @@ def read_msp_ts(
     # xarr_["marker"] = np.uint(0.5 * (lpos + rpos))
     # xarr_["left_position"] = ("marker", lpos)
     # xarr_["right_position"] = ("marker", rpos)
-    xarr_['sample'] = [f"indiv{s}" for s in xarr_['sample']]
+    xarr_['sample'] = np.array([f"indiv{s:d}" for s in xarr_['sample']], dtype=object)
 
     return xarr_
 
@@ -202,7 +202,7 @@ def read_msp_mutations(
         node_admixed = node_admixed[np.in1d(node_admixed, keep)]
 
     sample_id = [ ts.node(node_admixed[i]).individual for i in range(0, len(node_admixed), 2)]
-    sample = np.array([f"indiv{s}" for s in sample_id], dtype=object)
+    sample = np.array([f"indiv{s:d}" for s in sample_id], dtype=object)
     marker = np.array(ts.tables.sites.position)
 
 
