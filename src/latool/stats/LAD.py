@@ -30,13 +30,13 @@ def empirical_LAD(
 
 
 def theoretical_LAD(
-    approx: bool =True, 
+    approx: bool =True,
     genetic_map: xr.DataArray=None,
     g: int = 10,
     ) -> xr.DataArray:
     """Compute theoretical local ancestry linkage disequilibrium from genetic map
-    
-    corr(A,A) = (1-theta)^g, where theta is recombination probability and g is number of generation since admixture 
+
+    corr(A,A) = (1-theta)^g, where theta is recombination probability and g is number of generation since admixture
     corr(A,A) approx exp(-g*lambda), where lambda is genetic distance in cM
 
     Returns:
@@ -46,7 +46,7 @@ def theoretical_LAD(
 
     dist_mat = np.abs(genetic_map.values - genetic_map.values.reshape(-1, 1))
     if approx:
-        corr = np.exp(-dist_mat * g)
+        corr = np.exp(- 0.01 * dist_mat * g)
     else:
         corr = (0.5*(1+np.exp(-2*dist_mat)))**g
 
