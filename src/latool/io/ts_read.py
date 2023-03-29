@@ -157,11 +157,13 @@ def read_msp_ts(
             )
         )
     if extract is not None:
+        _logger.info(f"Extracting markers to keep")
         for di, _ in enumerate(xarr_list):
             xarr_list[di] = xarr_list[di].ffill(dim='marker')
             xarr_list[di] = xarr_list[di].sel(marker=extract, method='ffill')
             xarr_list[di]['marker'] = extract
 
+    _logger.info(f"Stacking bataches")
     xarr_ = xr.concat(xarr_list, dim="sample")
     # xarr_ = laxr_simplify(xarr_)
 
