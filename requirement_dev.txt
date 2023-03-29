@@ -1,6 +1,7 @@
 pre-commit
 sphinx==4.2
 sphinx-autodoc-typehints
+pydata-sphinx-theme==0.13.1
 sphinx-book-theme
 pytest-cov
 pytest-accept
