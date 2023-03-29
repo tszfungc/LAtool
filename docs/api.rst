@@ -15,6 +15,7 @@ Input and Output
     read_msp_ts
     write_pgen
     write_Q
+    write_rfmix_fb
 
 
 

@@ -12,7 +12,11 @@ LAtool
     Tool for local ancestry
 
 
-A longer description of your project goes here...
+
+Installation
+============
+
+
 
 
 .. _pyscaffold-notes:
@@ -35,8 +39,3 @@ Don't forget to tell your contributors to also install and use pre-commit.
 
 .. _pre-commit: https://pre-commit.com/
 
-Note
-====
-
-This project has been set up using PyScaffold 4.3. For details and usage
-information on PyScaffold see https://pyscaffold.org/.
