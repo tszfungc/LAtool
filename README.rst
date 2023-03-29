@@ -9,7 +9,7 @@ LAtool
 ======
 
 
-    Tool for local ancestry
+    Misc. functions for local ancestry
 
 
 
