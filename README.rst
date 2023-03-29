@@ -16,26 +16,22 @@ LAtool
 Installation
 ============
 
+Download::
+
+    git clone https://github.com/tszfungc/LAtool.git
+
+1. (optional) Create new conda env::
+
+   conda create -n latool python=3.10
+   conda activate latool
+
+2. Install requirement and LAtool::
+
+   pip install -r requirement.txt
+   python setup.py install
 
 
+Example
+=======
 
-.. _pyscaffold-notes:
-
-Making Changes & Contributing
-=============================
-
-This project uses `pre-commit`_, please make sure to install it before making any
-changes::
-
-    pip install pre-commit
-    cd LAtool
-    pre-commit install
-
-It is a good idea to update the hooks to the latest version::
-
-    pre-commit autoupdate
-
-Don't forget to tell your contributors to also install and use pre-commit.
-
-.. _pre-commit: https://pre-commit.com/
-
+In progress
